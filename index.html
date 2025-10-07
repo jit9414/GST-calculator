@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GST Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .result {
+      margin-top: 20px;
+    }
+    .amount-words {
+      margin-top: 15px;
+      font-style: italic;
+      color: green;
+      font-weight: bold;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-weight: bold;
+      color: #444;
+      font-size: 15px;
+      border-top: 1px dashed #ccc;
+      padding-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>GST Calculator</h2>
+
+  <div class="form-group">
+    <label>Total Amount (with GST)</label>
+    <input type="number" id="total" oninput="calculateGST()">
+  </div>
+
+  <div class="form-group">
+    <label>GST Rate (%)</label>
+    <input type="number" id="gstRate" value="28" oninput="calculateGST()">
+  </div>
+
+  <div class="result">
+    <div><strong>Base Amount:</strong> ₹<span id="baseAmount">0</span></div>
+    <div><strong>CGST:</strong> ₹<span id="cgst">0</span></div>
+    <div><strong>SGST:</strong> ₹<span id="sgst">0</span></div>
+    <div><strong>Total:</strong> ₹<span id="finalTotal">0</span></div>
+    <div class="amount-words" id="inWords"></div>
+  </div>
+
+  <div class="footer">
+    Designed & Created By: Jitendra Badiyasar
+  </div>
+</div>
+
+<script>
+  function calculateGST() {
+    const total = parseFloat(document.getElementById("total").value) || 0;
+    const gstRate = parseFloat(document.getElementById("gstRate").value) || 0;
+
+    const base = total * 100 / (100 + gstRate);
+    const halfGst = (total - base) / 2;
+
+    document.getElementById("baseAmount").textContent = base.toFixed(2);
+    document.getElementById("cgst").textContent = halfGst.toFixed(2);
+    document.getElementById("sgst").textContent = halfGst.toFixed(2);
+    document.getElementById("finalTotal").textContent = total.toFixed(2);
+
+    document.getElementById("inWords").textContent = "Total in words: " + convertNumberToWords(Math.round(total)) + " Rupees Only";
+  }
+
+  function convertNumberToWords(amount) {
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
+      'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen',
+      'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    if ((amount = amount.toString()).length > 9) return 'Overflow';
+    const n = ('000000000' + amount).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return;
+
+    let str = '';
+    str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+    str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+    str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+    str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+    str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+
+    return str.trim();
+  }
+</script>
+
+</body>
+</html>
